@@ -29,8 +29,8 @@ class removerObra : Fragment() {
         val view = inflater.inflate(R.layout.fragment_remover_obra, container, false)
         obraList = view.findViewById(R.id.obra_list)
 
-        // Recuperar obras do Firestore
-        db.collection("obras")
+        // Recuperar obras da coleção "Obras2"
+        db.collection("Obras2")
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -46,12 +46,15 @@ class removerObra : Fragment() {
 
         // Adicionar listener para o botão de exclusão
         obraList.setOnItemClickListener { _, _, position, _ ->
-            val obraId = obras[position]
-            db.collection("obras")
-                .document(obraId)
-                .delete()
+            val obraName = obras[position]
+            db.collection("Obras2")
+                .whereEqualTo("nome", obraName)
+                .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
+                        for (document in task.result!!) {
+                            document.reference.delete()
+                        }
                         obras.removeAt(position)
                         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, obras)
                         obraList.adapter = adapter
