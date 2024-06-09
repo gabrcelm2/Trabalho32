@@ -46,15 +46,12 @@ class removerObra : Fragment() {
 
         // Adicionar listener para o botão de exclusão
         obraList.setOnItemClickListener { _, _, position, _ ->
-            val obraName = obras[position]
+            val obraId = obras[position]
             db.collection("Obras2")
-                .whereEqualTo("nome", obraName)
-                .get()
+                .document(obraId)
+                .delete()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        for (document in task.result!!) {
-                            document.reference.delete()
-                        }
                         obras.removeAt(position)
                         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, obras)
                         obraList.adapter = adapter
