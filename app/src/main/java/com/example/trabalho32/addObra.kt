@@ -24,8 +24,11 @@ import java.io.ByteArrayOutputStream
 class addObra : Fragment() {
 
     private var nomeObra: EditText? = null
+    private var autorObra: EditText? = null
+    private var descricaoObra: EditText? = null
     private lateinit var imageView: ImageView
-    private var imageString: String? =null
+    private var imageString: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,46 +39,48 @@ class addObra : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view = inflater.inflate(R.layout.fragment_add_obra, container, false)
+        val view = inflater.inflate(R.layout.fragment_add_obra, container, false)
         nomeObra = view.findViewById<EditText>(R.id.NomeObra)
         imageView = view.findViewById<ImageView>(R.id.imageViewObra)
+        autorObra = view.findViewById<EditText>(R.id.AutorObra)
+        descricaoObra = view.findViewById<EditText>(R.id.DescricaoObra)
 
         imageView.setOnClickListener {
             openGallery()
         }
 
         view.findViewById<Button>(R.id.buttonSalvar).setOnClickListener {
-
-            when{
+            when {
                 nomeObra?.text.isNullOrEmpty() -> {
                     mensagem(it, "Preencha o campo: Nome da Obra!", "#004af5")
                 }
-                imageView == null -> {
+                autorObra?.text.isNullOrEmpty() -> {
+                    mensagem(it, "Preencha o campo: Autor da Obra!", "#004af5")
+                }
+                descricaoObra?.text.isNullOrEmpty() -> {
+                    mensagem(it, "Preencha o campo: Descrição da Obra!", "#004af5")
+                }
+                imageView.drawable == null -> {
                     mensagem(it, "Selecione uma imagem!", "#004af5")
                 }
-
-
-
-
+                else -> {
+                    val nome = nomeObra?.text.toString()
+                    val autor = autorObra?.text.toString()
+                    val descricao = descricaoObra?.text.toString()
+                    Firebase.firestore.collection("Obras2").add(mapOf(
+                        "nome" to nome,
+                        "imagem" to imageString,
+                        "autor" to autor,
+                        "descricao" to descricao,
+                    ))
+                    mensagem(it, "Obra salva!", "#008000") // green color for success
+                }
             }
-
-            val nome = nomeObra?.text.toString()
-            if (nome.isEmpty()) {
-                Log.d("banco", "Campo nome está vazio")
-                return@setOnClickListener
-            }
-            if (imageString == null) {
-                Log.d("banco", "Imagem não foi selecionada")
-                return@setOnClickListener
-            }
-            Firebase.firestore.collection("Obras").add(mapOf(
-                "nome" to nome,
-                "imagem" to imageString
-            ))
         }
 
         return view
     }
+
     fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
@@ -85,12 +90,8 @@ class addObra : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 0 ) {
+        if (requestCode == 0) {
             data?.data?.let { uri ->
-                // Aqui você pode manipular a URI da imagem selecionada
-                //val imageView: ImageView = findViewById(R.id.imageView)
-
-
                 imageView.setImageURI(uri)
 
                 // Converter o Bitmap do ImageView em um array de bytes
@@ -101,6 +102,7 @@ class addObra : Fragment() {
             }
         }
     }
+
     private fun getByteArrayFromImageView(imageView: ImageView): ByteArray? {
         val drawable = imageView.drawable as BitmapDrawable
         val bitmap = drawable.bitmap

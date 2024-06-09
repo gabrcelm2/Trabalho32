@@ -27,12 +27,36 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Digite nome da obra"
+        android:hint="Digite nome da Obra"
         android:fontFamily="@font/montserrat_semibold"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
+    <EditText
+        android:id="@+id/AutorObra"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Digite o autor da Obra"
+        android:fontFamily="@font/montserrat_semibold"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NomeObra" />
+    <EditText
+        android:id="@+id/DescricaoObra"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Digite uma descrição para a Obra"
+        android:fontFamily="@font/montserrat_semibold"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AutorObra" />
 
     <TextView
         android:id="@+id/textView8"
@@ -44,7 +68,7 @@
         android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NomeObra" />
+        app:layout_constraintTop_toBottomOf="@+id/DescricaoObra" />
 
     <ImageView
         android:id="@+id/imageViewObra"
