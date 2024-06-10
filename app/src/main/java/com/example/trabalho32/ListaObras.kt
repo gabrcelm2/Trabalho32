@@ -12,16 +12,20 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trabalho32.adapter.ObrasAdapter
+import com.example.trabalho32.databinding.FragmentGerenObrasBinding
 import com.example.trabalho32.databinding.FragmentListaObrasBinding
 import com.example.trabalho32.model.Obras
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ListaObras : Fragment() {
 
     private lateinit var binding: FragmentListaObrasBinding
     private lateinit var obrasAdapter: ObrasAdapter
-    private val listaObras = mutableListOf<Obras>()
-    private lateinit var recyclerView:RecyclerView
+    private val listaObras = ArrayList<Obras>()
+    private lateinit var visitasRecyclerView: RecyclerView
+    private lateinit var searchView: SearchView
+    private lateinit var filteredVisitList: ArrayList<Obras>
 
 
     override fun onCreateView(
@@ -30,22 +34,46 @@ class ListaObras : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentListaObrasBinding.inflate(inflater, container, false)
-
+        visitasRecyclerView = binding.recyclerViewObras
+        getVisitasData()
         return binding.root
+
+
+    }
+
+    private fun getVisitasData() {
+        val db = FirebaseFirestore.getInstance()
+        val visitasRef = db.collection("Obras2")
+
+        visitasRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                for (document in task.result!!) {
+                    val visitas = document.toObject(Obras::class.java)
+                    listaObras.add(visitas)
+                }
+                filteredVisitList = listaObras
+                val vAdapter = ObrasAdapter(filteredVisitList)
+                visitasRecyclerView.adapter = vAdapter
+
+            } else {
+                Log.w("Visitas", "Error getting data", task.exception)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initSearchView()
+
         val cadastro = arguments?.getString("cadastro")
 
         binding.txtNomeUsuario.text = "Bem-vindo(a)"
-        recyclerView = binding.recyclerViewObras
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        val recyclerViewObras = binding.recyclerViewObras
 
-        obrasAdapter = ObrasAdapter(requireContext(), listaObras)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = obrasAdapter
+        recyclerViewObras.layoutManager = GridLayoutManager(requireContext(), 2)
+        obrasAdapter = ObrasAdapter(listaObras)
+        recyclerViewObras.setHasFixedSize(true)
+        recyclerViewObras.adapter = obrasAdapter
+
         binding.btvoltar.setOnClickListener {
             val fragmentManager = parentFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
@@ -53,43 +81,4 @@ class ListaObras : Fragment() {
             fragmentTransaction.commit()
         }
     }
-
-    private fun initSearchView() {
-        binding.pesquisa.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-
-                obrasAdapter.search(query)
-                obrasAdapter.notifyDataSetChanged()
-                   Log.d("SimpleSearchView", "Submit:$query")
-                return false
-            }
-
-            override fun onQueryTextChange(query: String): Boolean {
-                Log.d("SimpleSearchView", "Submit:$query")
-                return false
-            }
-        })
-
-        binding.pesquisa.setOnSearchClickListener {
-        }
-
-        binding.pesquisa.setOnCloseListener {
-            obrasAdapter.clearSearch()
-            true
-        }
-    }
-
-//    private fun getObras() {
-//        val obras1 = Obras(R.drawable.pint1, "Amor e Ódio")
-//        listaObras.add(obras1)
-//
-//        val obras2 = Obras(R.drawable.pint2, "Luz na Escuridão")
-//        listaObras.add(obras2)
-//
-//        val obras3 = Obras(R.drawable.pint3,"Um dia com Ela")
-//        listaObras.add(obras3)
-//
-//        val obras4 = Obras(R.drawable.pint4,"Idas e Vindas")
-//        listaObras.add(obras4)
-//    }
 }

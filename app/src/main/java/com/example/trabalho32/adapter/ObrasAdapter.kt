@@ -1,10 +1,15 @@
 package com.example.trabalho32.adapter
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trabalho32.DescricaoPint
@@ -12,114 +17,29 @@ import com.example.trabalho32.R
 import com.example.trabalho32.databinding.ObrasItemBinding
 import com.example.trabalho32.model.Obras
 
+class ObrasAdapter( private val listaObras: ArrayList<Obras>) : RecyclerView.Adapter<ObrasAdapter.ObrasViewHolder>() {
 
-class ObrasAdapter(private val context:
-                   Context, private val listaObras: MutableList<Obras>) :
-    RecyclerView.Adapter<ObrasAdapter.ObrasViewHolder>() {
 
-    private lateinit var talkObras:MutableList<Obras>
-
-    init {
-        talkObras = MutableList(10, { Obras()})
-        talkObras.clear()
-        talkObras.addAll(listaObras)
-    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ObrasViewHolder {
 
-        val itemLista = ObrasItemBinding.inflate(LayoutInflater.from(context), parent, false)
-
+        val itemLista = LayoutInflater.from(parent.context).inflate(R.layout.obras_item,parent,false)
         return ObrasViewHolder(itemLista)
     }
 
-    override fun getItemCount() = listaObras.size
-
+    override fun getItemCount(): Int {
+        return listaObras.size
+    }
     override fun onBindViewHolder(holder: ObrasViewHolder, position: Int) {
-//        holder.imgObra.setImageResource(listaObras[position].img!!)
-/*        holder.txtObra.text = listaObras[position].nome
-        holder.obraId = listaObras[position].id.toString()
+        //holder.obraId = talkObras[position].id.toString()
+        //holder.imgObra.setImageBitmap(BitmapFactory.decodeByteArray(
+        //listaObras[position].img!!.toByteArray(),0,listaObras[position].img!!.length))
+        holder.txtObra.text = listaObras[position].nome
 
-        val bundle = Bundle()
-        bundle.putString("id", holder.obraId)
-
-        val fragment = DescricaoPint()
-        val fragmentManager = (context as FragmentActivity).supportFragmentManager
-        fragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()*/
-
-//        when (position) {
-//            0 -> holder.imgObra.setOnClickListener {
-//                val fragment = DescricaoPint()
-//                val fragmentManager = (context as FragmentActivity).supportFragmentManager
-//                fragmentManager.beginTransaction()
-//                    .replace(R.id.container, fragment)
-//                    .commit()
-//            }
-//
-//            1 -> holder.imgObra.setOnClickListener {
-//                val fragment = DescricaoPint2()
-//                val fragmentManager = (context as FragmentActivity).supportFragmentManager
-//                fragmentManager.beginTransaction()
-//                    .replace(R.id.container, fragment)
-//                    .commit()
-//            }
-//
-//            2 -> holder.imgObra.setOnClickListener {
-//                val fragment = DescricaoPint3()
-//                val fragmentManager = (context as FragmentActivity).supportFragmentManager
-//                fragmentManager.beginTransaction()
-//                    .replace(R.id.container, fragment)
-//                    .commit()
-//            }
-//
-//            3 -> holder.imgObra.setOnClickListener {
-//                val fragment = DescricaoPint4()
-//                val fragmentManager = (context as FragmentActivity).supportFragmentManager
-//                fragmentManager.beginTransaction()
-//                    .replace(R.id.container, fragment)
-//                    .commit()
-//            }
-//
-//        }
     }
 
-    fun search(query: String) {
+        inner class ObrasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-
-
-        //talkObras.clear()
-        listaObras.clear()
-        if (query.isEmpty()) {
-            listaObras.addAll(talkObras)
-            //Log.d("updateRecycle","lista/;"+listaObras.toString())
-        } else {
-            for (doc in talkObras){
-
-                if(doc.nome!!.toLowerCase()!!.contains(query)){
-                    listaObras.add(doc)
-                }
-            }
-            //listaObras.addAll(talkObras.filter { it.nome!!.contains(query, true) })
-            Log.d("updateRecycle","lista/;"+listaObras.toString())
-
-        }
-
-        notifyDataSetChanged()
-
-        //return talkObras.isEmpty()
-    }
-
-
-    fun clearSearch() {
-        //talkObras.clear()
-        //talkObras.addAll(listaObras)
-        notifyDataSetChanged()
-    }
-
-        inner class ObrasViewHolder(binding: ObrasItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
-                var obraId =""
-            val imgObra = binding.imgObra
-            val txtObra = binding.txtObra
+            val imgObra = itemView.findViewById<ImageView>(R.id.imgObra)
+            val txtObra = itemView.findViewById<TextView>(R.id.txtObra)
         }
     }
