@@ -79,7 +79,7 @@ class GerenVisitas : Fragment() {
             }
         }
     }
-
+//oi tudo bem
     private fun filterVisitas(query: String?): ArrayList<Visitas> {
         val filteredList = ArrayList<Visitas>()
         for (visita in visitList) {
